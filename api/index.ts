@@ -44,6 +44,12 @@ io.on("connection", socket => {
     const room = payload?.room ?? "default";
     const token = payload?.token;
 
+    // Ignorar joins repetidos del mismo socket a la misma sala
+    if (socket.data.room && socket.data.room === room) {
+      // ya está en la sala solicitada, ignora
+      return;
+    }
+
     // Validar token si es requerido
     if (REQUIRE_TOKEN && VIDEO_TOKEN && token !== VIDEO_TOKEN) {
       socket.emit("webrtc:join:error", { message: "Token inválido" });
